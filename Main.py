@@ -39,6 +39,10 @@ weather_data_object = weather_api_client.get_weather_data(venue_data_object.lati
 weather_data_object.print_weather_data()
 
 tennis_scorer = TennisScorer()
+current_crowd_score = tennis_scorer.calculate_crowd_score(venue_data_object)
+current_weather_score = tennis_scorer.calculate_weather_score(weather_data_object)
 current_venue_score = tennis_scorer.calculate_score(venue_data_object, weather_data_object)
+print(f"Current Crowd Score: {current_crowd_score}")
+print(f"Current Weather Score: {current_weather_score}")
 print(f"Current Venue Score: {current_venue_score}")
 

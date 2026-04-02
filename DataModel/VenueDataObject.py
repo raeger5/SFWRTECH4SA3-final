@@ -1,3 +1,5 @@
+import datetime
+
 class VenueDataObject:
     best_times_id: str
     name: str
@@ -16,6 +18,12 @@ class VenueDataObject:
         self.crowd_forecast = crowd_forecast 
         self.besttimes_timestamp = besttimes_timestamp
 
+    def get_todays_crowd_forecast(self):
+        today_index = datetime.datetime.now().weekday()
+        try:
+            return self.crowd_forecast[today_index].get('day_raw', [])
+        except (KeyError, TypeError):
+            return 0
 
     def print_venue_data(self):
         print(f"BestTimes ID: {self.best_times_id}")
