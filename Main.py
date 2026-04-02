@@ -8,6 +8,7 @@
 #
 ################################################################################
 
+from BusinessLogic.ScoreFactory import ScoreFactory
 from BusinessLogic.TennisScorer import TennisScorer
 from BusinessLogic.VolleyballScorer import VolleyballScorer
 from BusinessLogic.SoccerScorer import SoccerScorer
@@ -41,7 +42,7 @@ weather_api_client = WeatherAPIClient()
 weather_data_object = weather_api_client.get_weather_data(venue_data_object.latitude, venue_data_object.longitude)
 weather_data_object.print_weather_data()
 
-tennis_scorer = TennisScorer()
+tennis_scorer = ScoreFactory.create_scorer("tennis")
 current_crowd_score = tennis_scorer.calculate_crowd_score(venue_data_object)
 current_weather_score = tennis_scorer.calculate_weather_score(weather_data_object)
 current_venue_score = tennis_scorer.calculate_score(venue_data_object, weather_data_object)
@@ -50,7 +51,7 @@ print(f"Current Crowd Score: {current_crowd_score}")
 print(f"Current Weather Score: {current_weather_score}")
 print(f"Current Venue Score: {current_venue_score}")
 
-volleyball_scorer = VolleyballScorer()
+volleyball_scorer = ScoreFactory.create_scorer("volleyball")
 current_crowd_score = volleyball_scorer.calculate_crowd_score(venue_data_object)
 current_weather_score = volleyball_scorer.calculate_weather_score(weather_data_object)      
 current_venue_score = volleyball_scorer.calculate_score(venue_data_object, weather_data_object)
@@ -59,7 +60,7 @@ print(f"Current Crowd Score: {current_crowd_score}")
 print(f"Current Weather Score: {current_weather_score}")
 print(f"Current Venue Score: {current_venue_score}")
 
-softball_scorer = SoftballScorer()  
+softball_scorer = ScoreFactory.create_scorer("softball") 
 current_crowd_score = softball_scorer.calculate_crowd_score(venue_data_object)
 current_weather_score = softball_scorer.calculate_weather_score(weather_data_object)
 current_venue_score = softball_scorer.calculate_score(venue_data_object, weather_data_object)
@@ -68,7 +69,7 @@ print(f"Current Crowd Score: {current_crowd_score}")
 print(f"Current Weather Score: {current_weather_score}")
 print(f"Current Venue Score: {current_venue_score}")
 
-soccer_scorer = SoccerScorer()
+soccer_scorer = ScoreFactory.create_scorer("soccer")
 current_crowd_score = soccer_scorer.calculate_crowd_score(venue_data_object)
 current_weather_score = soccer_scorer.calculate_weather_score(weather_data_object)
 current_venue_score = soccer_scorer.calculate_score(venue_data_object, weather_data_object)
