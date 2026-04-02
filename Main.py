@@ -8,6 +8,7 @@
 #
 ################################################################################
 
+from BusinessLogic.TennisScorer import TennisScorer
 from DataAccess.WeatherAPIClient import WeatherAPIClient
 from DataAccess.VenueRepository import VenueRepository
 
@@ -33,8 +34,11 @@ venue_repository = VenueRepository()
 venue_data_object = venue_repository.get_cached_data(venue_name, venue_address)
 venue_data_object.print_venue_data()
 
-
 weather_api_client = WeatherAPIClient()
 weather_data_object = weather_api_client.get_weather_data(venue_data_object.latitude, venue_data_object.longitude)
 weather_data_object.print_weather_data()
+
+tennis_scorer = TennisScorer()
+current_venue_score = tennis_scorer.calculate_score(venue_data_object, weather_data_object)
+print(f"Current Venue Score: {current_venue_score}")
 
