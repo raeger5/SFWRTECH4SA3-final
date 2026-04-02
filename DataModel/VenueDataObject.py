@@ -1,4 +1,12 @@
 class VenueDataObject:
+    best_times_id: str
+    name: str
+    address: str
+    latitude: float
+    longitude: float
+    crowd_forecast: dict
+    besttimes_timestamp: float
+
     def __init__(self, best_times_id, name, address, latitude, longitude, crowd_forecast, besttimes_timestamp):
         self.best_times_id = best_times_id
         self.name = name

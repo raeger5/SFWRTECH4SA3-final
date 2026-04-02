@@ -1,7 +1,13 @@
-from DataAccess import WeatherAPIClient
-
-
 class WeatherDataObject:
+    description: str
+    temperature: float
+    feels_like: float
+    temp_min: float
+    temp_max: float
+    wind_speed: float
+    precipitation: float
+    humidity: int
+
     def __init__(self, description,temperature, feels_like, temp_min, temp_max, wind_speed, precipitation, humidity):
         self.description = description
         self.temperature = temperature
