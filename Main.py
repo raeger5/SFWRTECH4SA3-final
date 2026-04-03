@@ -16,64 +16,108 @@ from BusinessLogic.SoftballScorer import SoftballScorer
 from DataAccess.WeatherAPIClient import WeatherAPIClient
 from DataAccess.VenueRepository import VenueRepository
 
-
-# WELCOME TO FIELDDAY!
-# 1. View Current Venue Group Reports
-#   a. Venue Group 1
-#   b. Venue Group 2
-#   c. Venue Group 3
-#   ...
-# 2. Manage Venue Groups
-#   a. Select Venue Group
-#       i. Add Venue to Group
-#       ii. Remove Venue from Group
-#   b. Create New Venue Group
-#   c. Delete Venue Group
-# 3. Exit
-
-venue_name = "McDonald's"
-venue_address = "Ocean Ave, San Francisco"
-
 venue_repository = VenueRepository()
-venue_data_object = venue_repository.get_cached_data(venue_name, venue_address)
-venue_data_object.print_venue_data()
-
 weather_api_client = WeatherAPIClient()
-weather_data_object = weather_api_client.get_weather_data(venue_data_object.latitude, venue_data_object.longitude)
-weather_data_object.print_weather_data()
+tennis_venues = [
+    {"name": "Pickleball & Tennis Courts of Pinafore Park", "address": "31-41 Parkside Dr, St Thomas, ON N5R 1G5"},
+    {"name": "Greenhills Tennis Centre", "address": "4838 Colonel Talbot Rd Unit B, London, ON N6P 1H7"},
+    {"name": "Glanworth Park", "address": "6536 Bradish Rd, London, ON N6N 1N6"},
+    # {"name": "Pickleball Courts at Burwell Park", "address": "465 Burwell Rd, St Thomas, ON N5P 4N6"},
+]
+beach_volleyball_venues = [
+    {"name": "Port Stanley Beach", "address": "Lake Erie, 162 William St, Port Stanley, ON N5L 1E4"},
+    {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
+    # {"name": "1Password Park", "address": "355 Burwell Rd, St Thomas, ON N5P 4M3"},
+]
+softball_venues = [
+    {"name": "Pinafore Park", "address": "31 Parkside Dr, St Thomas, ON N5R 1G5"},
+    {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
+    # {"name": "1Password Park", "address": "355 Burwell Rd, St Thomas, ON N5P 4M3"},
+]
+soccer_venues = [
+    {"name": "Pinafore Park", "address": "31 Parkside Dr, St Thomas, ON N5R 1G5"},
+    {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
+    {"name": "Greenway Park", "address": "9 Pine Valley Dr, St Thomas, ON N5P 0A8"},
+    ]
 
-tennis_scorer = ScoreFactory.create_scorer("tennis")
-current_crowd_score = tennis_scorer.calculate_crowd_score(venue_data_object)
-current_weather_score = tennis_scorer.calculate_weather_score(weather_data_object)
-current_venue_score = tennis_scorer.calculate_score(venue_data_object, weather_data_object)
-print(f"--TENNIS--")
-print(f"Current Crowd Score: {current_crowd_score}")
-print(f"Current Weather Score: {current_weather_score}")
-print(f"Current Venue Score: {current_venue_score}")
+# This function will print the report for a given sport type. 
+# It will fetch the venue data and weather data, calculate the scores, and print the leaderboard.
+def print_venue_report(venues, sport_type):
+    results = []
+    for venue in venues:
+        # Get venue data (with caching) and weather data, then calculate scores
+        venue_data_object = venue_repository.get_cached_data(venue["name"], venue["address"])
+        weather_data_object = weather_api_client.get_weather_data(venue_data_object.latitude, venue_data_object.longitude)
+        
+        # Use the ScoreFactory to get the appropriate scorer for the sport type, then calculate the scores
+        scorer = ScoreFactory.create_scorer(sport_type)
+        venue_score = scorer.calculate_crowd_score(venue_data_object)
+        weather_score = scorer.calculate_weather_score(weather_data_object)
+        score = scorer.calculate_score(venue_data_object, weather_data_object)
+        
+        # Store the results in a list for sorting and printing later
+        results.append({
+            "name": venue["name"],
+            "score": score,
+            "crowd_score": venue_score,
+            "weather_score": weather_score
+        })
 
-volleyball_scorer = ScoreFactory.create_scorer("volleyball")
-current_crowd_score = volleyball_scorer.calculate_crowd_score(venue_data_object)
-current_weather_score = volleyball_scorer.calculate_weather_score(weather_data_object)      
-current_venue_score = volleyball_scorer.calculate_score(venue_data_object, weather_data_object)
-print(f"--VOLLEYBALL--")
-print(f"Current Crowd Score: {current_crowd_score}")
-print(f"Current Weather Score: {current_weather_score}")
-print(f"Current Venue Score: {current_venue_score}")
+    # Sort the list with highest score at index 0
+    ranked_results = sorted(results, key=lambda x: x['score'], reverse=True)
 
-softball_scorer = ScoreFactory.create_scorer("softball") 
-current_crowd_score = softball_scorer.calculate_crowd_score(venue_data_object)
-current_weather_score = softball_scorer.calculate_weather_score(weather_data_object)
-current_venue_score = softball_scorer.calculate_score(venue_data_object, weather_data_object)
-print(f"--SOFTBALL--")
-print(f"Current Crowd Score: {current_crowd_score}")
-print(f"Current Weather Score: {current_weather_score}")
-print(f"Current Venue Score: {current_venue_score}")
+    # Print the final leaderboard
+    print("\n")
+    print(f"--- {sport_type.upper()} VENUE RANKINGS ---")
+    for i, entry in enumerate(ranked_results, 1):
+        print(f"{i}. *{entry['score']:.2f}* {entry['name']} - *Crowd Score: {entry['crowd_score']:.2f} * Weather Score: {entry['weather_score']:.2f}*")
+    print("\n")
 
-soccer_scorer = ScoreFactory.create_scorer("soccer")
-current_crowd_score = soccer_scorer.calculate_crowd_score(venue_data_object)
-current_weather_score = soccer_scorer.calculate_weather_score(weather_data_object)
-current_venue_score = soccer_scorer.calculate_score(venue_data_object, weather_data_object)
-print(f"--SOCCER--")
-print(f"Current Crowd Score: {current_crowd_score}")
-print(f"Current Weather Score: {current_weather_score}")
-print(f"Current Venue Score: {current_venue_score}")
+def main():
+    print("Welcome to FieldDay!")
+    print("Your ultimate venue selection assistant for outdoor sports!")
+    print("Let's find the best venues for your next game based on crowd levels and weather conditions.\n")
+    # WELCOME TO FIELDDAY!
+    # 1. View Current Venue Group Reports
+    #   a. Venue Group 1
+    #   b. Venue Group 2
+    #   c. Venue Group 3
+    #   ...
+    # 2. Manage Venue Groups
+    #   a. Select Venue Group
+    #       i. Add Venue to Group
+    #       ii. Remove Venue from Group
+    #   b. Create New Venue Group
+    #   c. Delete Venue Group
+    # 3. Exit
+
+    
+    
+    while True:
+        print("Select a report to view:")
+        print("1. Tennis Report")
+        print("2. Beach Volleyball Report")
+        print("3. Softball Report")
+        print("4. Soccer Report")
+        print("0. Quit the application.")
+
+        choice = input("Enter your choice (1-4): ")
+
+        if choice == "0":
+            print("Thank you for using FieldDay! Goodbye!")
+            break
+
+        if choice == "1":
+            print_venue_report(tennis_venues, "tennis")
+
+        elif choice == "2":
+            print_venue_report(beach_volleyball_venues, "volleyball")
+
+        elif choice == "3":           
+            print_venue_report(softball_venues, "softball")
+
+        elif choice == "4":
+            print_venue_report(soccer_venues, "soccer")
+  
+if __name__ == "__main__":
+    main()

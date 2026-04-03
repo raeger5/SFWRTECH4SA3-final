@@ -11,14 +11,13 @@ class WeatherAPIClient:
 
 
     def get_weather_data(self, lat, lon):
-        print("Fetching weather data...")
+        print("-     Fetching weather data...")
         url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={self.API_KEY}&units=metric"
 
         response = requests.get(url)
         
         if response.status_code == 200:
             data = response.json()
-            print(data)
             return WeatherDataObject(
                 description=data['weather'][0].get('description', 'No description available'),
                 temperature=data['main']['temp'],

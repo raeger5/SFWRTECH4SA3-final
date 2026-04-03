@@ -38,11 +38,11 @@ class VenueRepository:
         
         cached_json = self.db.get(venue_id)
         if cached_json:
-            print(f"--- Cached {venue_name} retrieved ---")
+            print(f"-     Cached {venue_name} data retrieved...")
             venue_dict = json.loads(cached_json)
             if time.time() - venue_dict.get("besttimes_timestamp", 0) < self.expiry_time:
                 return VenueDataObject(**venue_dict)
 
-        print(f"--- Fetching {venue_name} from BestTimes ---")
+        print(f"-     Fetching {venue_name} from BestTimes API...")
         return self.save_venue_data(venue_id, venue_name, venue_address)
 
