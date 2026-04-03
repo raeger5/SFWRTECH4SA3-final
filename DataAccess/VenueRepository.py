@@ -6,6 +6,7 @@ import json
 
 from DataAccess.BesttimesAPIClient import BesttimesAPIClient
 from DataAccess.VenueAdapter import VenueAdapter
+from DataModel import NullVenueDataObject
 from DataModel.VenueDataObject import VenueDataObject
 load_dotenv()
 
@@ -30,7 +31,7 @@ class VenueRepository:
             self.db.set(venue_id, json.dumps(venue_object.__dict__))
             return venue_object
             
-        return None
+        return NullVenueDataObject()
 
 # getCachedVenueData will return cached data if it exists and is not expired, otherwise it will call save_venue_data to fetch new data and cache it
     def get_cached_data(self, venue_name, venue_address):
@@ -44,5 +45,5 @@ class VenueRepository:
                 return VenueDataObject(**venue_dict)
 
         print(f"-     Fetching {venue_name} from BestTimes API...")
-        return self.save_venue_data(venue_id, venue_name, venue_address)
-
+        result = self.save_venue_data(venue_id, venue_name, venue_address)
+        return result if result else NullVenueDataObject()

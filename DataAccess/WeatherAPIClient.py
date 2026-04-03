@@ -1,14 +1,13 @@
 import os
 import requests
 from dotenv import load_dotenv
+from DataModel import NullWeatherDataObject
 from DataModel.WeatherDataObject import WeatherDataObject
 load_dotenv()
 
 class WeatherAPIClient:
     def __init__(self):
-        
         self.API_KEY = os.getenv("WEATHER_API_KEY")
-
 
     def get_weather_data(self, lat, lon):
         print("-     Fetching weather data...")
@@ -31,5 +30,5 @@ class WeatherAPIClient:
         
         else:
             print(f"Error {response.status_code}: {response.json().get('message')}")
-            return None
+            return NullWeatherDataObject()
 
