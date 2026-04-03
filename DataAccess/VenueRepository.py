@@ -39,11 +39,28 @@ class VenueRepository:
         
         cached_json = self.db.get(venue_id)
         if cached_json:
-            print(f"-     Cached {venue_name} data retrieved...")
+            print(f"-     Fetching cached venue data...")
             venue_dict = json.loads(cached_json)
             if time.time() - venue_dict.get("besttimes_timestamp", 0) < self.expiry_time:
                 return VenueDataObject(**venue_dict)
 
-        print(f"-     Fetching {venue_name} from BestTimes API...")
+        print(f"-     Fetching fresh data from BestTimes API...")
         result = self.save_venue_data(venue_id, venue_name, venue_address)
         return result if result else NullVenueDataObject()
+    
+
+# Venue Group Management Methods
+    def get_venues_by_group(self, group_name: str) -> list:
+        group_key = f"group:{group_name.lower()}"
+        venue_jsons = self.db.smembers(group_key)
+        return [json.loads(v) for v in venue_jsons]
+
+    def add_venue_to_group(self, group_name: str, name: str, address: str):
+        group_key = f"group:{group_name.lower()}"
+        venue_data = json.dumps({"name": name, "address": address})
+        self.db.sadd(group_key, venue_data)
+
+    def remove_venue_from_group(self, group_name: str, name: str, address: str):
+        group_key = f"group:{group_name.lower()}"
+        venue_data = json.dumps({"name": name, "address": address})
+        self.db.srem(group_key, venue_data)
