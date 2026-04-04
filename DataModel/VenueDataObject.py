@@ -23,7 +23,7 @@ class VenueDataObject:
         try:
             return self.crowd_forecast[today_index].get('day_raw', [])
         except (KeyError, TypeError):
-            return 0
+            return [0] * 24
 
     def print_venue_data(self):
         print(f"BestTimes ID: {self.best_times_id}")

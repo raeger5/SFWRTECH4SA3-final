@@ -65,7 +65,7 @@ def main():
         choice = input("Enter your choice (1-2): ")
 
         if choice == "0":
-            print("Thank you for using FieldDay! Goodbye!")
+            print("👋 Thank you for using FieldDay! Goodbye!")
             break
 
         # Option 1: View Venue Group Reports

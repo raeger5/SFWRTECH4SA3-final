@@ -1,4 +1,4 @@
-from DataModel import WeatherDataObject
+from DataModel.WeatherDataObject import WeatherDataObject
 
 class NullWeatherDataObject(WeatherDataObject):
     
@@ -14,7 +14,6 @@ class NullWeatherDataObject(WeatherDataObject):
             precipitation=0.0,  # No rain
             humidity=50  # Moderate humidity
         )
-        self.is_null = True
 
 
     

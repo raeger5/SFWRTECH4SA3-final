@@ -1,6 +1,6 @@
 import datetime
 
-from DataModel import VenueDataObject
+from DataModel.VenueDataObject import VenueDataObject
 
 class NullVenueDataObject(VenueDataObject):
 
@@ -15,3 +15,5 @@ class NullVenueDataObject(VenueDataObject):
             besttimes_timestamp=datetime.datetime.now().timestamp()
         )
         
+    def get_todays_crowd_forecast(self):
+        return [0] * 24
