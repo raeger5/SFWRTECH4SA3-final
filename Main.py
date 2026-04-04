@@ -8,8 +8,6 @@
 #
 ################################################################################
 
-import json
-
 from BusinessLogic.ScoreFactory import ScoreFactory
 from DataAccess.WeatherAPIClient import WeatherAPIClient
 from DataAccess.VenueRepository import VenueRepository
@@ -17,19 +15,52 @@ from DataAccess.VenueRepository import VenueRepository
 venue_repository = VenueRepository()
 weather_api_client = WeatherAPIClient()
 
+
 def main():
-    # Uncomment and run this block to reset andpre-populate the venue groups in Redis.
+    # venue_repository.db.delete("venue:1password_park")
+    # ** INSTRUCTIONS **
+    # MAKE SURE YOU HAVE THE ENV VARIABLES SET UP IN YOUR .env FILE BEFORE RUNNING THE PROGRAM.
+
+    # 1. ON FIRST RUN: uncomment the following line to seed the initial venue groups in Redis, then re-comment it for future runs to preserve your data.
     # reset_initial_data()
-    print("Welcome to FieldDay!")
+    
+    # 2. Run the program and select option 1 to view venue group reports.
+
+    # 3. Select option 2 to manage venue groups, and select option 1 to add a venue, and specify the sport type.
+    #   When adding a venue, make sure to copy & paste the name and address exactly as they appear on Google Maps for best results.
+    #   You can try any of these sample venues or add your own:
+    #       name | address
+    #       * these will work and create a complete VenueDataObject with coordinates from the API:
+    #       "Pickleball & Tennis Courts of Pinafore Park" | "31-41 Parkside Dr, St Thomas, ON N5R 1G5"
+    #       "Greenhills Tennis Centre" | "4838 Colonel Talbot Rd Unit B, London, ON N6P 1H7"
+    #       "Glanworth Park" | "6536 Bradish Rd, London, ON N6N 1N6"
+    #       "Port Stanley Beach" | "Lake Erie, 162 William St, Port Stanley, ON N5L 1E4"
+    #       "Boler Mountain" | "689 Griffith St, London, ON N6K 2S5"
+    #       "Pinafore Park" | "31 Parkside Dr, St Thomas, ON N5R 1G5"
+    #       "Greenway Park" | "9 Pine Valley Dr, St Thomas, ON N5P 0A8"
+
+    #       * these will trigger the manual entry flow since they are not recognized by the API, but you can still add them by entering coordinates manually:
+    #           If you choose to add a venue manually, you will need to enter the latitude and longitude coordinates. 
+    #           You can find these by searching for the venue on Google Maps, right-clicking on the location, and selecting "What's here?" 
+    #           The coordinates will be displayed at the bottom of the screen.
+    #       "Pickleball Courts at Burwell Park" | "465 Burwell Rd, St Thomas, ON N5P 4N6"
+    #       "1Password Park" | "355 Burwell Rd, St Thomas, ON N5P 4M3" -> lat: 42.7719, lon: -81.1908
+    
+    # 5. After adding a venue, select option 1 to view the updated reports and see how the new venue ranks against the others in its group.
+
+    # 6. You can also remove venues from groups by selecting option 2 and then option 2 again, and following the prompts.
+ 
+    
+    print("\n🎉  Welcome to FieldDay! 🎉")
     print("Your ultimate venue selection assistant for outdoor sports!")
     print("Let's find the best venues for your next game based on crowd levels and weather conditions.\n")
 
     while True:
-        print("==================================================")
-        print("Select an option:")
-        print("1. View Venue Group Reports")
-        print("2. Manage Venue Groups")
-        print("0. Exit")
+        print("\n==================================================")
+        print("🏠 MAIN MENU")
+        print("1. 🏆 View Venue Group Reports")
+        print("2. ⚙️  Manage Venue Groups")
+        print("0. 🚪 Exit")
         print("==================================================")
         choice = input("Enter your choice (1-2): ")
 
@@ -79,13 +110,13 @@ def print_venue_report(venues, sport_type):
     # Header
     print("\n" + "="*85)
     if sport_type == "tennis":
-        print(" 🎾  TENNIS POWER RANKINGS  🎾".center(85, " "))
+        print(" 🎾  TENNIS VENUE RANKINGS  🎾".center(85, " "))
     elif sport_type == "volleyball":
-        print(" 🏐  BEACH VOLLEYBALL POWER RANKINGS  🏐".center(85, " "))
+        print(" 🏐  BEACH VOLLEYBALL VENUE RANKINGS  🏐".center(85, " "))
     elif sport_type == "softball":
-        print(" 🥎  SOFTBALL POWER RANKINGS  🥎".center(85, " "))
+        print(" 🥎  SOFTBALL VENUE RANKINGS  🥎".center(85, " "))
     elif sport_type == "soccer":
-        print(" ⚽  SOCCER POWER RANKINGS  ⚽".center(85, " ")) 
+        print(" ⚽  SOCCER VENUE RANKINGS  ⚽".center(85, " ")) 
     print("="*85)
     
     # Table Column Headers
@@ -108,7 +139,11 @@ def print_venue_report(venues, sport_type):
             name = name[:35] + "..."
 
         # Print with the dynamic rank_padding
-        print(f"{rank_str:<{rank_padding}} {name:<40} {entry['score']:>10.1f} {entry['crowd_score']:>10.1f} {entry['weather_score']:>10.1f}")
+        if entry['crowd_score'] == 0:
+            crowd_display = "N/A"
+        else: 
+            crowd_display = f"{entry['crowd_score']:.1f}"
+        print(f"{rank_str:<{rank_padding}} {name:<40} {entry['score']:>10.1f} {crowd_display:>10} {entry['weather_score']:>10.1f}")
 
     print("="*85 + "\n")
     input("Press Enter to continue...")
@@ -116,13 +151,13 @@ def print_venue_report(venues, sport_type):
 
 def view_reports_menu():
     while True:
-        print("==================================================")
-        print("View Venue Group Reports:")
-        print("1. Tennis Report")
-        print("2. Beach Volleyball Report")
-        print("3. Softball Report")
-        print("4. Soccer Report")
-        print("0. Back")
+        print("\n==================================================")
+        print("🏆 View Venue Group Reports")
+        print("1. 🎾 Tennis Report")
+        print("2. 🏐 Beach Volleyball Report")
+        print("3. 🥎 Softball Report")
+        print("4. ⚽ Soccer Report")
+        print("0. ⬅️  Back")
         print("==================================================")
 
         report_choice = input("Enter your choice (1-4): ")
@@ -151,11 +186,11 @@ def view_reports_menu():
 
 def manage_groups_menu():
     while True:
-        print("==================================================")
-        print("\nManage Venue Groups:")
-        print("1. Add Venue to Group")
-        print("2. Remove Venue from Group")
-        print("0. Back")
+        print("\n==================================================")
+        print("⚙️  Manage Venue Groups")
+        print("1. ➕ Add Venue to Group")
+        print("2. ➖ Remove Venue from Group")
+        print("0. ⬅️  Back")
         print("==================================================")
         manage_choice = input("Enter your choice (1-2): ")
 
@@ -170,14 +205,18 @@ def manage_groups_menu():
             
 def add_venues_to_groups_menu():
     while True:
-        print("==================================================")
-        print("\nWhich group would you like to add a venue to?")
-        print("1. Tennis")
-        print("2. Beach Volleyball")
-        print("3. Softball")
-        print("4. Soccer")
+        print("\n==================================================")
+        print("➕ Which group would you like to add a venue to?")
+        print("1. 🎾 Tennis")
+        print("2. 🏐 Beach Volleyball")
+        print("3. 🥎 Softball")
+        print("4. ⚽ Soccer")
+        print("0. ⬅️  Back")
         print("==================================================")
         group_choice = input("Enter your choice (1-4): ")
+
+        if group_choice == "0":
+            return
 
         group_mapping = {
             "1": "tennis",
@@ -188,35 +227,35 @@ def add_venues_to_groups_menu():
 
         if group_choice in group_mapping:
             group_name = group_mapping[group_choice]
-            venue_name = input("Enter the name of the venue: ")
-            venue_address = input("Enter the address of the venue: ")
+            print("* Search on google maps and copy & paste the following details exactly:")
+            venue_name = input("Enter the NAME of the venue: ")
+            venue_address = input("Enter the ADDRESS of the venue: ")        
             venue_repository.add_venue_to_group(group_name, venue_name, venue_address)
-            print(f"\n{venue_name} has been added to the {group_name} group.\n")
 
         input("Press Enter to continue...")
         return
 
 def remove_venues_from_groups_menu():
     while True:
-        print("==================================================")
-        print("\nWhich group would you like to remove a venue from?")
-        print("1. Tennis")
-        print("2. Beach Volleyball")
-        print("3. Softball")
-        print("4. Soccer")
-        print("0. Back")
+        print("\n==================================================")
+        print("➖ Which group would you like to remove a venue from?")
+        print("1. 🎾 Tennis")
+        print("2. 🏐 Beach Volleyball")
+        print("3. 🥎 Softball")
+        print("4. ⚽ Soccer")
+        print("0. ⬅️  Back")
         print("==================================================")
         group_choice = input("Enter your choice (1-4): ")
 
+        if group_choice == "0":
+            return
+        
         group_mapping = {
             "1": "tennis",
             "2": "volleyball",
             "3": "softball",
             "4": "soccer"
         }
-
-        if group_choice == "0":
-            return
 
         if group_choice in group_mapping:
             group_name = group_mapping[group_choice]
@@ -227,7 +266,6 @@ def remove_venues_from_groups_menu():
             venue_number = int(input("Enter the index of the venue you want to remove: "))
             venue_to_remove = venue_repository.get_venues_by_group(group_name)[venue_number - 1]
             venue_repository.remove_venue_from_group(group_name, venue_to_remove["name"], venue_to_remove["address"])
-            print(f"{venue_to_remove['name']} has been removed from the {group_name} group.\n")
 
         else:
             print("Invalid choice. Please enter a number between 1 and 4.\n")
