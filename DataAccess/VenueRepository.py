@@ -6,7 +6,7 @@ import json
 
 from DataAccess.BesttimesAPIClient import BesttimesAPIClient
 from DataAccess.VenueAdapter import VenueAdapter
-from DataModel import NullVenueDataObject
+from DataModel.NullVenueDataObject import NullVenueDataObject
 from DataModel.VenueDataObject import VenueDataObject
 load_dotenv()
 

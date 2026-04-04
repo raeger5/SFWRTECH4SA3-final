@@ -8,6 +8,8 @@
 #
 ################################################################################
 
+import json
+
 from BusinessLogic.ScoreFactory import ScoreFactory
 from DataAccess.WeatherAPIClient import WeatherAPIClient
 from DataAccess.VenueRepository import VenueRepository
@@ -15,20 +17,36 @@ from DataAccess.VenueRepository import VenueRepository
 venue_repository = VenueRepository()
 weather_api_client = WeatherAPIClient()
 
-    # WELCOME TO FIELDDAY!
-    # 1. View Current Venue Group Reports
-    #   a. Venue Group 1
-    #   b. Venue Group 2
-    #   c. Venue Group 3
-    #   ...
-    # 2. Manage Venue Groups
-    #   a. Select Venue Group
-    #       i. Add Venue to Group
-    #       ii. Remove Venue from Group
-    #   b. Create New Venue Group
-    #   c. Delete Venue Group
-    # 3. Exit
+def main():
+    # Uncomment and run this block to reset andpre-populate the venue groups in Redis.
+    # reset_initial_data()
+    print("Welcome to FieldDay!")
+    print("Your ultimate venue selection assistant for outdoor sports!")
+    print("Let's find the best venues for your next game based on crowd levels and weather conditions.\n")
 
+    while True:
+        print("==================================================")
+        print("Select an option:")
+        print("1. View Venue Group Reports")
+        print("2. Manage Venue Groups")
+        print("0. Exit")
+        print("==================================================")
+        choice = input("Enter your choice (1-2): ")
+
+        if choice == "0":
+            print("Thank you for using FieldDay! Goodbye!")
+            break
+
+        # Option 1: View Venue Group Reports
+        if choice == "1":
+            view_reports_menu()        
+        
+        # Option 2: Manage Venue Groups
+        elif choice == "2":
+            manage_groups_menu()
+       
+        else:
+            print("Invalid choice. Please enter a number between 0 and 4.\n")   
 
 # This function will print the report for a given sport type. 
 # It will fetch the venue data and weather data, calculate the scores, and print the leaderboard.
@@ -93,77 +111,172 @@ def print_venue_report(venues, sport_type):
         print(f"{rank_str:<{rank_padding}} {name:<40} {entry['score']:>10.1f} {entry['crowd_score']:>10.1f} {entry['weather_score']:>10.1f}")
 
     print("="*85 + "\n")
+    input("Press Enter to continue...")
+    
 
-def main():
-    print("Welcome to FieldDay!")
-    print("Your ultimate venue selection assistant for outdoor sports!")
-    print("Let's find the best venues for your next game based on crowd levels and weather conditions.\n")
-
+def view_reports_menu():
     while True:
-        print("Select a report to view:")
+        print("==================================================")
+        print("View Venue Group Reports:")
         print("1. Tennis Report")
         print("2. Beach Volleyball Report")
         print("3. Softball Report")
         print("4. Soccer Report")
-        print("0. Quit the application.")
+        print("0. Back")
+        print("==================================================")
 
-        choice = input("Enter your choice (1-4): ")
+        report_choice = input("Enter your choice (1-4): ")
 
-        if choice == "0":
-            print("Thank you for using FieldDay! Goodbye!")
-            break
+        if report_choice == "0":
+            return
 
-        if choice == "1":
+        if report_choice == "1":
             venues = venue_repository.get_venues_by_group("tennis")
             print_venue_report(venues, "tennis")
 
-        elif choice == "2":
+        elif report_choice == "2":
             venues = venue_repository.get_venues_by_group("volleyball")
             print_venue_report(venues, "volleyball")
 
-        elif choice == "3":           
+        elif report_choice == "3":           
             venues = venue_repository.get_venues_by_group("softball")
             print_venue_report(venues, "softball")
 
-        elif choice == "4":
+        elif report_choice == "4":
             venues = venue_repository.get_venues_by_group("soccer")
             print_venue_report(venues, "soccer")
+        
+        
+
+
+def manage_groups_menu():
+    while True:
+        print("==================================================")
+        print("\nManage Venue Groups:")
+        print("1. Add Venue to Group")
+        print("2. Remove Venue from Group")
+        print("0. Back")
+        print("==================================================")
+        manage_choice = input("Enter your choice (1-2): ")
+
+        if manage_choice == "0":
+            return
+
+        if manage_choice == "1":
+            add_venues_to_groups_menu()
+
+        elif manage_choice == "2":
+            remove_venues_from_groups_menu()
+            
+def add_venues_to_groups_menu():
+    while True:
+        print("==================================================")
+        print("\nWhich group would you like to add a venue to?")
+        print("1. Tennis")
+        print("2. Beach Volleyball")
+        print("3. Softball")
+        print("4. Soccer")
+        print("==================================================")
+        group_choice = input("Enter your choice (1-4): ")
+
+        group_mapping = {
+            "1": "tennis",
+            "2": "volleyball",
+            "3": "softball",
+            "4": "soccer"
+        }
+
+        if group_choice in group_mapping:
+            group_name = group_mapping[group_choice]
+            venue_name = input("Enter the name of the venue: ")
+            venue_address = input("Enter the address of the venue: ")
+            venue_repository.add_venue_to_group(group_name, venue_name, venue_address)
+            print(f"\n{venue_name} has been added to the {group_name} group.\n")
+
+        input("Press Enter to continue...")
+        return
+
+def remove_venues_from_groups_menu():
+    while True:
+        print("==================================================")
+        print("\nWhich group would you like to remove a venue from?")
+        print("1. Tennis")
+        print("2. Beach Volleyball")
+        print("3. Softball")
+        print("4. Soccer")
+        print("0. Back")
+        print("==================================================")
+        group_choice = input("Enter your choice (1-4): ")
+
+        group_mapping = {
+            "1": "tennis",
+            "2": "volleyball",
+            "3": "softball",
+            "4": "soccer"
+        }
+
+        if group_choice == "0":
+            return
+
+        if group_choice in group_mapping:
+            group_name = group_mapping[group_choice]
+            index = 1
+            for venue in venue_repository.get_venues_by_group(group_name):
+                print(f"{index}. {venue['name']} ({venue['address']})")
+                index += 1
+            venue_number = int(input("Enter the index of the venue you want to remove: "))
+            venue_to_remove = venue_repository.get_venues_by_group(group_name)[venue_number - 1]
+            venue_repository.remove_venue_from_group(group_name, venue_to_remove["name"], venue_to_remove["address"])
+            print(f"{venue_to_remove['name']} has been removed from the {group_name} group.\n")
+
         else:
-            print("Invalid choice. Please enter a number between 0 and 4.\n")   
+            print("Invalid choice. Please enter a number between 1 and 4.\n")
+
+        input("Press Enter to continue...")
+        return
+    
+def reset_initial_data():
+    tennis_venues = [
+    {"name": "Pickleball & Tennis Courts of Pinafore Park", "address": "31-41 Parkside Dr, St Thomas, ON N5R 1G5"},
+    {"name": "Greenhills Tennis Centre", "address": "4838 Colonel Talbot Rd Unit B, London, ON N6P 1H7"},
+    {"name": "Glanworth Park", "address": "6536 Bradish Rd, London, ON N6N 1N6"},
+    # {"name": "Pickleball Courts at Burwell Park", "address": "465 Burwell Rd, St Thomas, ON N5P 4N6"},
+    ]
+    beach_volleyball_venues = [
+        {"name": "Port Stanley Beach", "address": "Lake Erie, 162 William St, Port Stanley, ON N5L 1E4"},
+        {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
+        # {"name": "1Password Park", "address": "355 Burwell Rd, St Thomas, ON N5P 4M3"},
+    ]
+    softball_venues = [
+        {"name": "Pinafore Park", "address": "31 Parkside Dr, St Thomas, ON N5R 1G5"},
+        {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
+        # {"name": "1Password Park", "address": "355 Burwell Rd, St Thomas, ON N5P 4M3"},
+    ]
+    soccer_venues = [
+        {"name": "Pinafore Park", "address": "31 Parkside Dr, St Thomas, ON N5R 1G5"},
+        {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
+        {"name": "Greenway Park", "address": "9 Pine Valley Dr, St Thomas, ON N5P 0A8"},
+    ]
+    initial_data = {
+        "tennis": tennis_venues,
+        "volleyball": beach_volleyball_venues,
+        "softball": softball_venues,
+        "soccer": soccer_venues
+    }
+
+    sports_to_reset = ["tennis", "volleyball", "softball", "soccer"]
+    print("Clearing venue groups in Redis...")
+    for sport in sports_to_reset:
+        current_venues = venue_repository.get_venues_by_group(sport)
+        for venue in current_venues:
+            venue_repository.remove_venue_from_group(sport, venue["name"], venue["address"])
+    print("Seeding fresh initial data...")
+    for sport, venues in initial_data.items():
+        for v in venues:
+            venue_repository.add_venue_to_group(sport, v["name"], v["address"])
+            
 
 if __name__ == "__main__":
     main()
 
 
-# tennis_venues = [
-#     {"name": "Pickleball & Tennis Courts of Pinafore Park", "address": "31-41 Parkside Dr, St Thomas, ON N5R 1G5"},
-#     {"name": "Greenhills Tennis Centre", "address": "4838 Colonel Talbot Rd Unit B, London, ON N6P 1H7"},
-#     {"name": "Glanworth Park", "address": "6536 Bradish Rd, London, ON N6N 1N6"},
-#     # {"name": "Pickleball Courts at Burwell Park", "address": "465 Burwell Rd, St Thomas, ON N5P 4N6"},
-# ]
-# beach_volleyball_venues = [
-#     {"name": "Port Stanley Beach", "address": "Lake Erie, 162 William St, Port Stanley, ON N5L 1E4"},
-#     {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
-#     # {"name": "1Password Park", "address": "355 Burwell Rd, St Thomas, ON N5P 4M3"},
-# ]
-# softball_venues = [
-#     {"name": "Pinafore Park", "address": "31 Parkside Dr, St Thomas, ON N5R 1G5"},
-#     {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
-#     # {"name": "1Password Park", "address": "355 Burwell Rd, St Thomas, ON N5P 4M3"},
-# ]
-# soccer_venues = [
-#     {"name": "Pinafore Park", "address": "31 Parkside Dr, St Thomas, ON N5R 1G5"},
-#     {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
-#     {"name": "Greenway Park", "address": "9 Pine Valley Dr, St Thomas, ON N5P 0A8"},
-# ]
-
-# initial_data = {
-#     "tennis": tennis_venues,
-#     "volleyball": beach_volleyball_venues,
-#     "softball": softball_venues,
-#     "soccer": soccer_venues
-# }
-
-# for sport, venues in initial_data.items():
-#     for v in venues:
-#         venue_repository.add_venue_to_group(sport, v["name"], v["address"])
