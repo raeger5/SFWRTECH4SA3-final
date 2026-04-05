@@ -28,8 +28,11 @@ class VenueAdapter:
             
             # Ensure list of 24 zeros if 'day_raw' is missing
             day_raw = day_data.get('day_raw', [0] * 24) if isinstance(day_data, dict) else [0] * 24
-            
-            clean_forecast[day_index] = {'day_raw': day_raw}
+
+            # shift the day_raw list to start from 6am (index 6) instead of midnight (index 0)
+            normalized_day_raw = day_raw[-6:] + day_raw[:-6]
+
+            clean_forecast[day_index] = {'day_raw': normalized_day_raw}
 
         return VenueDataObject(
             best_times_id=venue_info.get('venue_id', 'null'),
