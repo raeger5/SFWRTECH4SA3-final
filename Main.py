@@ -21,8 +21,8 @@ def main():
     # ** INSTRUCTIONS **
     # MAKE SURE YOU HAVE THE ENV VARIABLES SET UP IN YOUR .env FILE BEFORE RUNNING THE PROGRAM.
 
-    # 1. ON FIRST RUN or TO RESEED: uncomment the following line to seed the initial venue groups in Redis, then re-comment it for future runs to preserve your data.
-    # reset_initial_data()
+    # 1. ON FIRST RUN or TO RESEED: 
+    #   Select option 3 from the main menu to set/reset the venue groups to the initial data.
     
     # 2. Run the program and select option 1 to view venue group reports.
 
@@ -55,9 +55,10 @@ def main():
         print("🏠 MAIN MENU")
         print("1. 🏆 View Venue Group Reports")
         print("2. ⚙️  Manage Venue Groups")
+        print("3. ↩️  Set Venue Groups to Initial Data")
         print("0. 🚪 Exit")
         print("==================================================")
-        choice = input("Enter your choice (1-2): ")
+        choice = input("Enter your choice (1-3): ")
 
         if choice == "0":
             print("👋 Thank you for using FieldDay! Goodbye!")
@@ -70,6 +71,16 @@ def main():
         # Option 2: Manage Venue Groups
         elif choice == "2":
             manage_groups_menu()
+
+        # Option 3: Reset Venue Groups to Initial Data
+        elif choice == "3":
+            print("⚠️  WARNING: Any custom venues you have added will be lost.")
+            confirm = input("Type 'RESET' to confirm or anything else to cancel: ")
+            if confirm == "RESET":
+                reset_initial_data()
+                print("✅ Venue groups have been reset to initial data.")
+            else:
+                print("❌ Reset cancelled. No changes have been made.")
        
         else:
             print("❌ Invalid choice. Please enter a number between 0 and 4.\n")   
