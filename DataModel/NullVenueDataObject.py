@@ -24,5 +24,5 @@ class NullVenueDataObject(VenueDataObject):
         print(f"\tNote: This is a cached venue object with no crowd data available.")
 
     def print_crowd_forecast(self):
-        print(f"\n👥 Crowd Forecast for {self.name}:")
+        print(f"\n👥 Today's Crowd Forecast for {self.name}:")
         print(f"\tNo crowd data available for this venue")

@@ -11,6 +11,7 @@
 from BusinessLogic.ScoreFactory import ScoreFactory
 from DataAccess.WeatherAPIClient import WeatherAPIClient
 from DataAccess.VenueRepository import VenueRepository
+import concurrent.futures
 
 venue_repository = VenueRepository()
 weather_api_client = WeatherAPIClient()
@@ -82,27 +83,39 @@ def main():
 # It will fetch the venue data and weather data, calculate the scores, and print the leaderboard.
 def print_venue_report(venues, sport_type):
     results = []
-    for venue in venues:
-        print(f"\nProcessing {venue['name']}...")
-        # Get venue data and weather data
-        venue_data_object = venue_repository.get_cached_data(venue["name"], venue["address"])
-        weather_data_object = weather_api_client.get_weather_data(venue_data_object.latitude, venue_data_object.longitude)
-        
-        # Use the ScoreFactory to get the scorer for the sport type, then calculate the scores
-        scorer = ScoreFactory.create_scorer(sport_type)
-        venue_score = scorer.calculate_crowd_score(venue_data_object)
-        weather_score = scorer.calculate_weather_score(weather_data_object)
-        score = scorer.calculate_score(venue_data_object, weather_data_object)
-        
-        # Store the results in a list for sorting and printing later
-        results.append({
-            "name": venue["name"],
-            "score": score,
-            "crowd_score": venue_score,
-            "weather_score": weather_score,
-            "venue_data": venue_data_object,
-            "weather_data": weather_data_object
-        })
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        for venue in venues:
+            print(f"\nProcessing {venue['name']}...")
+            
+            if 'latitude' in venue and 'longitude' in venue:
+                # STRATEGY A: PARALLEL (cached data available)
+                v_future = executor.submit(venue_repository.get_cached_data, venue["name"], venue["address"])
+                w_future = executor.submit(weather_api_client.get_weather_data, venue["latitude"], venue["longitude"])
+                
+                venue_data_object = v_future.result()
+                weather_data_object = w_future.result()
+            else:
+                # STRATEGY B: SEQUENTIAL (first time fetch)
+                # Find the location first
+                venue_data_object = venue_repository.get_cached_data(venue["name"], venue["address"])
+                # Now get the weather from coordinates in the venue data object
+                weather_data_object = weather_api_client.get_weather_data(venue_data_object.latitude, venue_data_object.longitude)
+            
+            # Use the ScoreFactory to get the scorer for the sport type, then calculate the scores
+            scorer = ScoreFactory.create_scorer(sport_type)
+            venue_score = scorer.calculate_crowd_score(venue_data_object)
+            weather_score = scorer.calculate_weather_score(weather_data_object)
+            score = scorer.calculate_score(venue_data_object, weather_data_object)
+            
+            # Store the results in a list for sorting and printing later
+            results.append({
+                "name": venue["name"],
+                "score": score,
+                "crowd_score": venue_score,
+                "weather_score": weather_score,
+                "venue_data": venue_data_object,
+                "weather_data": weather_data_object
+            })
 
     # Sort the list with highest score at index 0
     ranked_results = sorted(results, key=lambda x: x['score'], reverse=True)
