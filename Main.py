@@ -100,7 +100,9 @@ def print_venue_report(venues, sport_type):
             "name": venue["name"],
             "score": score,
             "crowd_score": venue_score,
-            "weather_score": weather_score
+            "weather_score": weather_score,
+            "venue_data": venue_data_object,
+            "weather_data": weather_data_object
         })
 
     # Sort the list with highest score at index 0
@@ -139,15 +141,45 @@ def print_venue_report(venues, sport_type):
             name = name[:35] + "..."
 
         # Print with the dynamic rank_padding
-        if entry['crowd_score'] == 0:
-            crowd_display = "N/A"
-        else: 
-            crowd_display = f"{entry['crowd_score']:.1f}"
+        crowd_display = f"{entry['crowd_score']:.1f}"
         print(f"{rank_str:<{rank_padding}} {name:<40} {entry['score']:>10.1f} {crowd_display:>10} {entry['weather_score']:>10.1f}")
 
-    print("="*85 + "\n")
-    input("Press Enter to continue...")
+    print_data_menu(ranked_results)
+
+def print_data_menu(ranked_results):
+    while True:
+        print("\n📊 View Raw Data for Venue")
+
+        choice = input("Enter your a venue rank to see details or hit 0 to go back: ")
+
+        if choice == "0":
+            return
+
+        try:
+            index = int(choice) - 1
+            if 0 <= index < len(ranked_results):
+                selected = ranked_results[index]
+                venue_data = selected['venue_data']
+                weather_data = selected['weather_data']
+
+                print("\n" + "-"*50)
+                print(f"📍 RAW DATA: {selected['name'].upper()}")
+                print("-"*50)
+                
+                # --- Venue Data ---
+                venue_data.print_venue_data()
+
+                # --- Weather Data ---
+                weather_data.print_weather_data()
     
+                # --- Crowd Data ---
+                venue_data.print_crowd_forecast()
+                
+            else:
+                print("❌ Invalid choice. Please pick a number from the list.")
+        except ValueError:
+            print("❌ Invalid input. Please enter a number.")
+
 
 def view_reports_menu():
     while True:

@@ -19,14 +19,15 @@ class WeatherDataObject:
         self.humidity = humidity
 
     def print_weather_data(self):
-        print(f"Weather Description: {self.description}")
-        print(f"Temperature: {self.temperature}°C") 
-        print(f"Feels Like: {self.feels_like}°C")
-        print(f"Min Temperature: {self.temp_min}°C")
-        print(f"Max Temperature: {self.temp_max}°C")
-        print(f"Wind Speed: {self.wind_speed} m/s")
-        print(f"Precipitation: {self.precipitation} mm")
-        print(f"Humidity: {self.humidity}%")
+        print(f"\n🌤️  WEATHER DETAILS:")
+        print(f"\tWeather Description: {self.description}")
+        print(f"\tTemperature:         {self.temperature}°C") 
+        print(f"\tFeels Like:          {self.feels_like}°C")
+        print(f"\tMin Temperature:     {self.temp_min}°C")
+        print(f"\tMax Temperature:     {self.temp_max}°C")
+        print(f"\tWind Speed:          {self.wind_speed} m/s")
+        print(f"\tPrecipitation:       {self.precipitation} mm")
+        print(f"\tHumidity:            {self.humidity}%")
 
 
     

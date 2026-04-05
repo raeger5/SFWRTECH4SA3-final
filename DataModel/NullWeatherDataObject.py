@@ -15,5 +15,9 @@ class NullWeatherDataObject(WeatherDataObject):
             humidity=50  # Moderate humidity
         )
 
+    def print_weather_data(self):
+        print(f"\n🌤️  WEATHER DETAILS:")
+        print(f"\tNo weather data available for this venue")
+
 
     

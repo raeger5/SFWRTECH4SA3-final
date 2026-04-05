@@ -86,6 +86,8 @@ class VenueRepository:
         if cached_json:
             print(f"-     Fetching cached venue data...")
             venue_dict = json.loads(cached_json)
+            if venue_dict.get('best_times_id') == "null":
+                return NullVenueDataObject() 
             if time.time() - venue_dict.get("besttimes_timestamp", 0) < self.expiry_time:
                 return VenueDataObject(**venue_dict)
 

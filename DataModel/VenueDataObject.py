@@ -26,11 +26,17 @@ class VenueDataObject:
             return [0] * 24
 
     def print_venue_data(self):
-        print(f"BestTimes ID: {self.best_times_id}")
-        print(f"Venue Name: {self.name}")
-        print(f"Address: {self.address}")
-        print(f"Latitude: {self.latitude}")
-        print(f"Longitude: {self.longitude}")
-        print(f"Crowd Forecast: {self.crowd_forecast}")
+        print(f"\n🏞️  VENUE DATA:")
+        print(f"\tVenue Name:     {self.name}")
+        print(f"\tAddress:        {self.address}")
+        print(f"\tLatitude:       {self.latitude}")
+        print(f"\tLongitude:      {self.longitude}")
+
+    def print_crowd_forecast(self):
+        print(f"\n👥 Crowd Forecast for {self.name}:")
+        forecast = self.get_todays_crowd_forecast()
+        for hour, level in enumerate(forecast):
+            time_label = f"{(hour % 12 or 12)}{'AM' if hour < 12 else 'PM'}"
+            print(f"\t{time_label:>4} - {level:>3}%")
         
         
