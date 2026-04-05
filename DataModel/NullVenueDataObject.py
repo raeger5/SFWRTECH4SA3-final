@@ -13,10 +13,15 @@ class NullVenueDataObject(VenueDataObject):
             longitude=kwargs.get('longitude', 0.0),
             crowd_forecast=kwargs.get('crowd_forecast', {i: {'day_raw': [0] * 24} for i in range(7)}),besttimes_timestamp=datetime.datetime.now().timestamp()
         )
+        self.null_object = True
         print(f"-     ⚠️  Cached data has no crowd data...")
         
     def get_todays_crowd_forecast(self):
         return [0] * 24
+    
+    def print_venue_data(self):
+        super().print_venue_data()
+        print(f"\tNote: This is a cached venue object with no crowd data available.")
 
     def print_crowd_forecast(self):
         print(f"\n👥 Crowd Forecast for {self.name}:")

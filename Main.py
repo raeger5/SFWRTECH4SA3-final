@@ -140,7 +140,10 @@ def print_venue_report(venues, sport_type):
             name = name[:35] + "..."
 
         # Print with the dynamic rank_padding
-        crowd_display = f"{entry['crowd_score']:.1f}"
+        if getattr(entry['venue_data'], 'null_object', False):
+            crowd_display = "N/A"
+        else:
+            crowd_display = f"{entry['crowd_score']:.1f}"
         print(f"{rank_str:<{rank_padding}} {name:<40} {entry['score']:>10.1f} {crowd_display:>10} {entry['weather_score']:>10.1f}")
 
     print_data_menu(ranked_results)
@@ -148,7 +151,6 @@ def print_venue_report(venues, sport_type):
 def print_data_menu(ranked_results):
     while True:
         print("\n📊 View Raw Data for Venue")
-
         choice = input("Enter your a venue rank to see details or hit 0 to go back: ")
 
         if choice == "0":

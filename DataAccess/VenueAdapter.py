@@ -31,7 +31,6 @@ class VenueAdapter:
             day_raw = day_data.get('day_raw', [0] * 24) if isinstance(day_data, dict) else [0] * 24
             
             clean_forecast[day_index] = {'day_raw': day_raw}
-            print(f"Processed day {day_index} forecast: {clean_forecast[day_index]}")
 
         return VenueDataObject(
             best_times_id=venue_info.get('venue_id', 'null'),
