@@ -77,7 +77,7 @@ def main():
             manage_groups_menu()
        
         else:
-            print("Invalid choice. Please enter a number between 0 and 4.\n")   
+            print("❌ Invalid choice. Please enter a number between 0 and 4.\n")   
 
 # This function will print the report for a given sport type. 
 # It will fetch the venue data and weather data, calculate the scores, and print the leaderboard.
@@ -309,12 +309,15 @@ def remove_venues_from_groups_menu():
             for venue in venue_repository.get_venues_by_group(group_name):
                 print(f"{index}. {venue['name']} ({venue['address']})")
                 index += 1
-            venue_number = int(input("Enter the index of the venue you want to remove: "))
-            venue_to_remove = venue_repository.get_venues_by_group(group_name)[venue_number - 1]
-            venue_repository.remove_venue_from_group(group_name, venue_to_remove["name"], venue_to_remove["address"])
+            try:
+                venue_number = int(input("Enter the index of the venue you want to remove: "))
+                venue_to_remove = venue_repository.get_venues_by_group(group_name)[venue_number - 1]
+                venue_repository.remove_venue_from_group(group_name, venue_to_remove["name"], venue_to_remove["address"])
+            except (ValueError, IndexError):
+                print("❌ Invalid input. Please enter a valid venue index.\n")
 
         else:
-            print("Invalid choice. Please enter a number between 1 and 4.\n")
+            print("❌ Invalid choice. Please enter a number between 1 and 4.\n")
 
         input("Press Enter to continue...")
         return
