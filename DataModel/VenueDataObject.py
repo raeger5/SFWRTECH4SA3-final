@@ -21,8 +21,9 @@ class VenueDataObject:
     def get_todays_crowd_forecast(self):
         today_index = datetime.datetime.now().weekday()
         try:
-            return self.crowd_forecast[today_index].get('day_raw', [])
-        except (KeyError, TypeError):
+            day_data = self.crowd_forecast.get(today_index) or self.crowd_forecast.get(str(today_index))
+            return day_data.get('day_raw', [0] * 24)
+        except (AttributeError, KeyError):
             return [0] * 24
 
     def print_venue_data(self):

@@ -17,11 +17,10 @@ weather_api_client = WeatherAPIClient()
 
 
 def main():
-    # venue_repository.db.delete("venue:1password_park")
     # ** INSTRUCTIONS **
     # MAKE SURE YOU HAVE THE ENV VARIABLES SET UP IN YOUR .env FILE BEFORE RUNNING THE PROGRAM.
 
-    # 1. ON FIRST RUN: uncomment the following line to seed the initial venue groups in Redis, then re-comment it for future runs to preserve your data.
+    # 1. ON FIRST RUN or TO RESEED: uncomment the following line to seed the initial venue groups in Redis, then re-comment it for future runs to preserve your data.
     # reset_initial_data()
     
     # 2. Run the program and select option 1 to view venue group reports.

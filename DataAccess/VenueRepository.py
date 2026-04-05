@@ -61,15 +61,19 @@ class VenueRepository:
                 lat = float(input("Enter Latitude (e.g., 42.77): "))
                 lon = float(input("Enter Longitude (e.g., -81.19): "))
                 
-                # Create a Null Object but "inject the real name and coordinates
-                manual_venue = NullVenueDataObject()
-                manual_venue.name = venue_name
-                manual_venue.address = venue_address
-                manual_venue.latitude = lat
-                manual_venue.longitude = lon
-                manual_venue.besttimes_timestamp = time.time()
-                
-                # Save to Redis
+                # Create a Null Object but inject the real name and coordinates so that the Adapter can use them
+                manual_data = {
+                    "venue_info": {
+                        "venue_id": "null", 
+                        "venue_name": venue_name,
+                        "venue_address": venue_address,
+                        "venue_lat": lat,
+                        "venue_lon": lon
+                    },
+                    "analysis": {} # This triggers the Adapter's 24-zero logic
+                }
+
+                manual_venue = VenueAdapter.adapt(manual_data)
                 self.db.set(venue_id, json.dumps(manual_venue.__dict__))
                 return manual_venue
             
@@ -87,7 +91,7 @@ class VenueRepository:
             print(f"-     Fetching cached venue data...")
             venue_dict = json.loads(cached_json)
             if venue_dict.get('best_times_id') == "null":
-                return NullVenueDataObject() 
+                return NullVenueDataObject(**venue_dict) 
             if time.time() - venue_dict.get("besttimes_timestamp", 0) < self.expiry_time:
                 return VenueDataObject(**venue_dict)
 
