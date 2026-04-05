@@ -31,21 +31,16 @@ def main():
     #   You can try any of these sample venues or add your own:
     #       name | address
     #       * these will work and create a complete VenueDataObject with coordinates from the API:
-    #       "Pickleball & Tennis Courts of Pinafore Park" | "31-41 Parkside Dr, St Thomas, ON N5R 1G5"
-    #       "Greenhills Tennis Centre" | "4838 Colonel Talbot Rd Unit B, London, ON N6P 1H7"
-    #       "Glanworth Park" | "6536 Bradish Rd, London, ON N6N 1N6"
-    #       "Port Stanley Beach" | "Lake Erie, 162 William St, Port Stanley, ON N5L 1E4"
-    #       "Boler Mountain" | "689 Griffith St, London, ON N6K 2S5"
-    #       "Pinafore Park" | "31 Parkside Dr, St Thomas, ON N5R 1G5"
-    #       "Greenway Park" | "9 Pine Valley Dr, St Thomas, ON N5P 0A8"
+    #       "Waterworks Park", "1 Waterworks Park, St Thomas, ON N5P 3S4"
+    #       "Storybook Gardens", "1958 Storybook Ln, London, ON N6H 2N7"
+    #       "Springbank Park", "1085 Commissioners Rd W, London, ON N6K 4Y6"
 
     #       * these will trigger the manual entry flow since they are not recognized by the API, but you can still add them by entering coordinates manually:
     #           If you choose to add a venue manually, you will need to enter the latitude and longitude coordinates. 
-    #           You can find these by searching for the venue on Google Maps, right-clicking on the location, and selecting "What's here?" 
-    #           The coordinates will be displayed at the bottom of the screen.
-    #       "Pickleball Courts at Burwell Park" | "465 Burwell Rd, St Thomas, ON N5P 4N6"
-    #       "1Password Park" | "355 Burwell Rd, St Thomas, ON N5P 4M3" -> lat: 42.7719, lon: -81.1908
-    
+    #           You can find these by searching for the venue on Google Maps, right-clicking on the location, and selecting coordinates. 
+    #       "Pickleball Courts at Burwell Park" | "465 Burwell Rd, St Thomas, ON N5P 4N6" -> 42.806126911890686, -81.15805678742016
+    #       "1Password Park" | "355 Burwell Rd, St Thomas, ON N5P 4M3" -> 42.80172687079454, -81.16732821708126
+    #       "Doug Tarry Complex" | "275 Bill Martyn Pkwy, St Thomas, ON N5R 1X6" -> 42.7518412560948, -81.16890730461743
     # 5. After adding a venue, select option 1 to view the updated reports and see how the new venue ranks against the others in its group.
 
     # 6. You can also remove venues from groups by selecting option 2 and then option 2 again, and following the prompts.
@@ -324,26 +319,32 @@ def remove_venues_from_groups_menu():
     
 def reset_initial_data():
     tennis_venues = [
-    {"name": "Pickleball & Tennis Courts of Pinafore Park", "address": "31-41 Parkside Dr, St Thomas, ON N5R 1G5"},
-    {"name": "Greenhills Tennis Centre", "address": "4838 Colonel Talbot Rd Unit B, London, ON N6P 1H7"},
-    {"name": "Glanworth Park", "address": "6536 Bradish Rd, London, ON N6N 1N6"},
-    # {"name": "Pickleball Courts at Burwell Park", "address": "465 Burwell Rd, St Thomas, ON N5P 4N6"},
+        {"name": "Pickleball & Tennis Courts of Pinafore Park", "address": "31-41 Parkside Dr, St Thomas, ON N5R 1G5"},
+        {"name": "Greenhills Tennis Centre", "address": "4838 Colonel Talbot Rd Unit B, London, ON N6P 1H7"},
+        {"name": "Glanworth Park", "address": "6536 Bradish Rd, London, ON N6N 1N6"},
+        {"name": "Kokomo Park Pickleball Courts", "address": "100 The Prom, Port Stanley, ON N5L 0B5"},
     ]
     beach_volleyball_venues = [
         {"name": "Port Stanley Beach", "address": "Lake Erie, 162 William St, Port Stanley, ON N5L 1E4"},
         {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
-        # {"name": "1Password Park", "address": "355 Burwell Rd, St Thomas, ON N5P 4M3"},
+        {"name": "Grand Bend Beach", "address": "Main St W, Grand Bend, ON N0M 1T0"},
+        {"name": "Port Burwell Beach", "address": "Erieus St, Port Burwell, ON N0J 1T0"},
     ]
     softball_venues = [
         {"name": "Pinafore Park", "address": "31 Parkside Dr, St Thomas, ON N5R 1G5"},
         {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
-        # {"name": "1Password Park", "address": "355 Burwell Rd, St Thomas, ON N5P 4M3"},
+        {"name": "Greenway Park", "address": "9 Pine Valley Dr, St Thomas, ON N5P 0A8"},
+        {"name": "Glanworth Park", "address": "6536 Bradish Rd, London, ON N6N 1N6"},
+        {"name": "Optimist Park", "address": "330 Chestnut St, St Thomas, ON N5R 5R9"},
     ]
     soccer_venues = [
         {"name": "Pinafore Park", "address": "31 Parkside Dr, St Thomas, ON N5R 1G5"},
         {"name": "Boler Mountain", "address": "689 Griffith St, London, ON N6K 2S5"},
         {"name": "Greenway Park", "address": "9 Pine Valley Dr, St Thomas, ON N5P 0A8"},
+        {"name": "Glanworth Park", "address": "6536 Bradish Rd, London, ON N6N 1N6"},
+        {"name": "Optimist Park", "address": "330 Chestnut St, St Thomas, ON N5R 5R9"},
     ]
+    
     initial_data = {
         "tennis": tennis_venues,
         "volleyball": beach_volleyball_venues,

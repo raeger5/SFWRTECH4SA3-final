@@ -58,8 +58,15 @@ class VenueRepository:
         
         if confirm == 'y':
             try:
-                lat = float(input("Enter Latitude (e.g., 42.77): "))
-                lon = float(input("Enter Longitude (e.g., -81.19): "))
+                # 42.7518412560948, -81.16890730461743
+                print("📍 Coordinates Tip: Right-click on Google Maps to copy coordinates (e.g., 42.7518412560948, -81.16890730461743)")
+                coord_input = input("Paste coordinates here: ")
+
+                # Split by the comma, then strip whitespace
+                lat_str, lon_str = coord_input.split(',')
+                lat = float(lat_str.strip())
+                lon = float(lon_str.strip())
+                print(f"✅ Success! Captured Lat: {lat}, Lon: {lon}")
                 
                 # Create a Null Object but inject the real name and coordinates so that the Adapter can use them
                 manual_data = {
