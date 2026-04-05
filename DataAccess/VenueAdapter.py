@@ -1,7 +1,6 @@
 import time
 
 from DataModel.VenueDataObject import VenueDataObject
-from geopy.geocoders import Nominatim
 
 class VenueAdapter:
     
